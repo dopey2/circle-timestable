@@ -11,7 +11,7 @@ const getColor = (i) => {
     let c1 = new Color("rebeccapurple");
     let c2 = new Color("lch", [85, 85, 85 + 720]);
     const c3 = c1.range(c2, {space: "lch", hue: "raw"})(i);
-    const c4 = c3.to("sRGB")
+    const c4 = c3.to("sRGB");
     return c4.toString();
 }
 
@@ -66,15 +66,8 @@ window.onload = () => {
 
         const lines = [];
 
-        let fab1 = 0;
-        let fab2 = 1;
-
         for(let i = 0; i <= points; i++) {
-            // let res = Math.sqrt((multiple ^ i)) % points;
-            // let res = (multiple ^ i) % points;
             let res = (multiple * i) % points;
-
-
 
             const x1 = CIRCLE_R * Math.cos(toRadians(step * i)) + CIRCLE_X;
             const y1 = CIRCLE_R * Math.sin(toRadians(step * i)) + CIRCLE_Y;
@@ -92,7 +85,6 @@ window.onload = () => {
 
         const linesSortedByLength = lines.sort((a, b) => b.length - a.length)
 
-
         for(let i = 0; i < linesSortedByLength.length; i++) {
             const {x1, x2, y1, y2, length} = linesSortedByLength[i];
 
@@ -106,23 +98,9 @@ window.onload = () => {
             lineElement.setAttribute("y2", y2);
             lineElement.setAttribute("stroke", color);
             lineElement.setAttribute("stroke-width", "2");
-            svgElement.appendChild(lineElement)
+            svgElement.appendChild(lineElement);
         }
-
     };
 
     render();
-
-    points = 100;
-
-    return;
-
-    points = 300;
-
-    setInterval(() => {
-        multiple += 0.1;
-        points += 1;
-        render();
-    }, 100)
-
 };
