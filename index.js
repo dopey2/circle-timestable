@@ -64,15 +64,39 @@ window.onload = () => {
             svgElement.appendChild(pointElement);
         }
 
+        const lines = [];
+
+        let fab1 = 0;
+        let fab2 = 1;
+
         for(let i = 0; i <= points; i++) {
-            let res = multiple * i % points;
+            // let res = Math.sqrt((multiple ^ i)) % points;
+            // let res = (multiple ^ i) % points;
+            let res = (multiple * i) % points;
+
+
 
             const x1 = CIRCLE_R * Math.cos(toRadians(step * i)) + CIRCLE_X;
             const y1 = CIRCLE_R * Math.sin(toRadians(step * i)) + CIRCLE_Y;
             const x2 = CIRCLE_R * Math.cos(toRadians(res * step)) + CIRCLE_X;
             const y2 = CIRCLE_R * Math.sin(toRadians(res * step)) + CIRCLE_Y;
 
-            const colorI = res / points
+            lines.push({
+                x1,
+                x2,
+                y1,
+                y2,
+                length: Math.hypot(x2 - x1, y2 - y1)
+            })
+        }
+
+        const linesSortedByLength = lines.sort((a, b) => b.length - a.length)
+
+
+        for(let i = 0; i < linesSortedByLength.length; i++) {
+            const {x1, x2, y1, y2, length} = linesSortedByLength[i];
+
+            const colorI = 1 - length / (CIRCLE_R * 2);
             const color = getColor(colorI)
 
             const lineElement = document.createElementNS("http://www.w3.org/2000/svg", 'line');
@@ -84,6 +108,7 @@ window.onload = () => {
             lineElement.setAttribute("stroke-width", "2");
             svgElement.appendChild(lineElement)
         }
+
     };
 
     render();
@@ -95,8 +120,9 @@ window.onload = () => {
     points = 300;
 
     setInterval(() => {
-        multiple += 0.02;
+        multiple += 0.1;
+        points += 1;
         render();
-    }, 50)
+    }, 100)
 
 };
