@@ -1,8 +1,19 @@
+import Color from "https://colorjs.io/dist/color.js";
+
 const CIRCLE_X = 500;
 const CIRCLE_Y = 500;
 const CIRCLE_R = 450;
 
 const CIRCLE_DEGREE = 360;
+
+
+const getColor = (i) => {
+    let c1 = new Color("rebeccapurple");
+    let c2 = new Color("lch", [85, 85, 85 + 720]);
+    const c3 = c1.range(c2, {space: "lch", hue: "raw"})(i);
+    const c4 = c3.to("sRGB")
+    return c4.toString();
+}
 
 window.onload = () => {
     const svgElement = document.getElementById("svg");
@@ -54,23 +65,38 @@ window.onload = () => {
         }
 
         for(let i = 0; i <= points; i++) {
-            let res = multiple * i;
+            let res = multiple * i % points;
 
             const x1 = CIRCLE_R * Math.cos(toRadians(step * i)) + CIRCLE_X;
             const y1 = CIRCLE_R * Math.sin(toRadians(step * i)) + CIRCLE_Y;
             const x2 = CIRCLE_R * Math.cos(toRadians(res * step)) + CIRCLE_X;
             const y2 = CIRCLE_R * Math.sin(toRadians(res * step)) + CIRCLE_Y;
 
+            const colorI = res / points
+            const color = getColor(colorI)
+
             const lineElement = document.createElementNS("http://www.w3.org/2000/svg", 'line');
             lineElement.setAttribute("x1", x1);
             lineElement.setAttribute("y1", y1);
             lineElement.setAttribute("x2", x2);
             lineElement.setAttribute("y2", y2);
-            lineElement.setAttribute("stroke", "red");
+            lineElement.setAttribute("stroke", color);
             lineElement.setAttribute("stroke-width", "2");
             svgElement.appendChild(lineElement)
         }
     };
 
     render();
+
+    points = 100;
+
+    return;
+
+    points = 300;
+
+    setInterval(() => {
+        multiple += 0.02;
+        render();
+    }, 50)
+
 };
