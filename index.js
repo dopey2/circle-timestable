@@ -1,10 +1,13 @@
 import Color from "https://colorjs.io/dist/color.js";
 
-const CIRCLE_X = 500;
-const CIRCLE_Y = 500;
-const CIRCLE_R = 450;
 
+const SIZE = 500;
+
+const CIRCLE_X = SIZE / 2;
+const CIRCLE_Y = SIZE / 2;
 const CIRCLE_DEGREE = 360;
+
+const CIRCLE_R = (SIZE / 2) * 0.99;
 
 
 const getColor = (i) => {
@@ -16,7 +19,14 @@ const getColor = (i) => {
 }
 
 window.onload = () => {
-    const svgElement = document.getElementById("svg");
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+
+    ctx.beginPath();
+    ctx.arc(CIRCLE_X, CIRCLE_Y, CIRCLE_R, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.closePath();
+
 
     let points = parseFloat(document.getElementById("points").value);
     let multiple = parseFloat(document.getElementById("multiple").value);
@@ -36,32 +46,18 @@ window.onload = () => {
     };
 
     const render = () => {
-
-        while (svgElement.firstChild) {
-            svgElement.removeChild(svgElement.firstChild);
-        }
+        ctx.clearRect(0, 0, SIZE, SIZE);
 
         const step = CIRCLE_DEGREE / points;
-
-        const circleElement = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
-        circleElement.setAttribute("cx", CIRCLE_X);
-        circleElement.setAttribute("cy", CIRCLE_Y);
-        circleElement.setAttribute("r", CIRCLE_R);
-        circleElement.setAttribute("stroke", "black");
-        circleElement.setAttribute("fill", "transparent");
-        circleElement.setAttribute("stroke-width", "5");
-        svgElement.appendChild(circleElement);
 
         for(let i = 0; i < CIRCLE_DEGREE; i += step) {
             const x = CIRCLE_R * Math.cos(toRadians(i)) + CIRCLE_X;
             const y = CIRCLE_R * Math.sin(toRadians(i)) + CIRCLE_Y;
 
-            const pointElement = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
-            pointElement.setAttribute("cx", x);
-            pointElement.setAttribute("cy", y);
-            pointElement.setAttribute("r", "5");
-            pointElement.setAttribute("fill", "red");
-            svgElement.appendChild(pointElement);
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.closePath();
         }
 
         const lines = [];
@@ -91,15 +87,13 @@ window.onload = () => {
             const colorI = 1 - length / (CIRCLE_R * 2);
             const color = getColor(colorI)
 
-            const lineElement = document.createElementNS("http://www.w3.org/2000/svg", 'line');
-            lineElement.setAttribute("x1", x1);
-            lineElement.setAttribute("y1", y1);
-            lineElement.setAttribute("x2", x2);
-            lineElement.setAttribute("y2", y2);
-            lineElement.setAttribute("stroke", color);
-            lineElement.setAttribute("stroke-width", "2");
-            svgElement.appendChild(lineElement);
-        }
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            ctx.strokeStyle = color;
+            ctx.closePath();}
     };
 
     render();
